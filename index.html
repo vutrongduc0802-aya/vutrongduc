@@ -1,67 +1,133 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Theo dõi kết quả học tập</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f7f6;
-            padding: 20px;
-        }
-        input, button {
-            padding: 8px;
-            margin: 5px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        button {
-            background: #5ca45c;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Theo dõi kết quả học tập</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7f6;
+    padding: 30px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.form {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    grid-column: span 3;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #63a95c;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background: #f2f2f2;
+}
+
+.delete {
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+</style>
 </head>
+
 <body>
 
+<div class="container">
 <h2>THEO DÕI KẾT QUẢ HỌC TẬP SINH VIÊN</h2>
 
-<input id="masv" placeholder="Mã SV">
-<input id="hoten" placeholder="Họ tên">
-<input id="lop" placeholder="Lớp">
-<input id="mon" placeholder="Môn học">
-<input id="ck" placeholder="Điểm CK">
-<button onclick="add()">Thêm</button>
+<div class="form">
+    <input id="hoten" placeholder="Họ tên">
+    <input id="masv" placeholder="Mã SV">
+    <input id="lop" placeholder="Lớp">
+
+    <input id="covan" placeholder="Cố vấn">
+    <input id="monhoc" placeholder="Môn học">
+    <input id="malop" placeholder="Mã lớp học phần">
+
+    <input id="cc" placeholder="Điểm chuyên cần">
+    <input id="dk" placeholder="Điểm điều kiện">
+    <input id="ck" placeholder="Điểm cuối kỳ">
+
+    <button onclick="add()">Thêm kết quả học tập</button>
+</div>
 
 <table>
-    <thead>
-        <tr>
-            <th>STT</th>
-            <th>Mã SV</th>
-            <th>Họ tên</th>
-            <th>Lớp</th>
-            <th>Môn</th>
-            <th>CK</th>
-        </tr>
-    </thead>
-    <tbody id="data"></tbody>
+<thead>
+<tr>
+    <th>STT</th>
+    <th>Mã SV</th>
+    <th>Họ tên</th>
+    <th>Lớp</th>
+    <th>Cố vấn</th>
+    <th>Môn học</th>
+    <th>Mã lớp</th>
+    <th>CC</th>
+    <th>ĐK</th>
+    <th>CK</th>
+    <th>Tổng kết</th>
+    <th>Thao tác</th>
+</tr>
+</thead>
+
+<tbody id="data"></tbody>
 </table>
+</div>
 
 <script>
-let list = JSON.parse(localStorage.getItem("sinhvien")) || [];
+let list = JSON.parse(localStorage.getItem("ketqua")) || [];
+
+function tinhTong(cc, dk, ck) {
+    return (cc*0.1 + dk*0.3 + ck*0.6).toFixed(2);
+}
 
 function render() {
     const tbody = document.getElementById("data");
     tbody.innerHTML = "";
+
     list.forEach((sv, i) => {
         tbody.innerHTML += `
         <tr>
@@ -69,22 +135,42 @@ function render() {
             <td>${sv.masv}</td>
             <td>${sv.hoten}</td>
             <td>${sv.lop}</td>
-            <td>${sv.mon}</td>
+            <td>${sv.covan}</td>
+            <td>${sv.monhoc}</td>
+            <td>${sv.malop}</td>
+            <td>${sv.cc}</td>
+            <td>${sv.dk}</td>
             <td>${sv.ck}</td>
-        </tr>`;
+            <td>${sv.tong}</td>
+            <td><button class="delete" onclick="remove(${i})">Xóa</button></td>
+        </tr>
+        `;
     });
-    localStorage.setItem("sinhvien", JSON.stringify(list));
+
+    localStorage.setItem("ketqua", JSON.stringify(list));
 }
 
 function add() {
     const sv = {
-        masv: masv.value,
         hoten: hoten.value,
+        masv: masv.value,
         lop: lop.value,
-        mon: mon.value,
-        ck: ck.value
+        covan: covan.value,
+        monhoc: monhoc.value,
+        malop: malop.value,
+        cc: cc.value,
+        dk: dk.value,
+        ck: ck.value,
+        tong: tinhTong(Number(cc.value), Number(dk.value), Number(ck.value))
     };
+
     list.push(sv);
+    render();
+    document.querySelectorAll("input").forEach(i => i.value = "");
+}
+
+function remove(i) {
+    list.splice(i, 1);
     render();
 }
 
