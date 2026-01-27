@@ -1,11 +1,219 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <title>Quản Lý Kết Quả Học Tập - Firebase</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7f6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-add {
+            background: #28a745;
+            color: white;
+            grid-column: span 3;
+            font-size: 16px;
+        }
+
+        .btn-add:hover {
+            background: #218838;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #f1f1f1;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-    xin chào công nghệ thông tin 2.k24
+
+<div class="container">
+    <h2>THEO DÕI KẾT QUẢ HỌC TẬP SINH VIÊN</h2>
+
+    <div class="form-group">
+        <input id="fullName" placeholder="Họ và tên">
+        <input id="studentId" placeholder="Mã sinh viên">
+        <input id="className" placeholder="Lớp">
+
+        <input id="advisor" placeholder="Cố vấn học tập">
+        <input id="subjectName" placeholder="Tên môn học">
+        <input id="classCode" placeholder="Mã lớp học phần">
+
+        <input type="number" id="attendance" placeholder="Điểm chuyên cần">
+        <input type="number" id="conditionScore" placeholder="Điểm điều kiện">
+        <input type="number" id="finalExam" placeholder="Điểm thi cuối kỳ">
+
+        <button class="btn-add" onclick="saveData()">Thêm kết quả học tập</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Mã SV</th>
+                <th>Họ tên</th>
+                <th>Lớp</th>
+                <th>Cố vấn</th>
+                <th>Môn học</th>
+                <th>Mã lớp</th>
+                <th>CC</th>
+                <th>ĐK</th>
+                <th>CK</th>
+                <th>Tổng kết</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+        getFirestore, 
+        collection, 
+        addDoc, 
+        deleteDoc, 
+        doc, 
+        onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAnud4xlfTlMiURm5JgZqgNkAxkYA3QX_8",
+        authDomain: "quanlylaodong-dev-e2e27.firebaseapp.com",
+        projectId: "quanlylaodong-dev-e2e27",
+        storageBucket: "quanlylaodong-dev-e2e27.firebasestorage.app",
+        messagingSenderId: "47969768914",
+        appId: "1:47969768914:web:9ee4890b2ec8ea42cf240b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const colRef = collection(db, "study_results");
+
+    window.saveData = async () => {
+        const data = {
+            fullName: fullName.value,
+            studentId: studentId.value,
+            className: className.value,
+            advisor: advisor.value,
+            subjectName: subjectName.value,
+            classCode: classCode.value,
+            attendance: Number(attendance.value),
+            conditionScore: Number(conditionScore.value),
+            finalExam: Number(finalExam.value),
+            createdAt: new Date()
+        };
+
+        if (!data.fullName || !data.studentId) {
+            alert("Vui lòng nhập họ tên và mã sinh viên!");
+            return;
+        }
+
+        await addDoc(colRef, data);
+        document.querySelectorAll("input").forEach(i => i.value = "");
+    };
+
+    window.deleteData = async (id) => {
+        if (confirm("Bạn có chắc muốn xóa bản ghi này?")) {
+            await deleteDoc(doc(db, "study_results", id));
+        }
+    };
+
+    onSnapshot(colRef, (snapshot) => {
+        tableBody.innerHTML = "";
+        let stt = 1;
+
+        snapshot.forEach(docSnap => {
+            const d = docSnap.data();
+            const total = (
+                d.attendance * 0.1 +
+                d.conditionScore * 0.3 +
+                d.finalExam * 0.6
+            ).toFixed(2);
+
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${stt++}</td>
+                    <td>${d.studentId}</td>
+                    <td>${d.fullName}</td>
+                    <td>${d.className}</td>
+                    <td>${d.advisor}</td>
+                    <td>${d.subjectName}</td>
+                    <td>${d.classCode}</td>
+                    <td>${d.attendance}</td>
+                    <td>${d.conditionScore}</td>
+                    <td>${d.finalExam}</td>
+                    <td><b>${total}</b></td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteData('${docSnap.id}')">
+                            Xóa
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    });
+</script>
+
 </body>
 </html>
