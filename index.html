@@ -2,175 +2,228 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Theo dõi kết quả học tập</title>
+<title>Bảng điểm sinh viên</title>
 
 <style>
-body {
-    font-family: Arial;
-    background: #f4f7f6;
-    padding: 30px;
-}
+    body {
+        font-family: Arial, sans-serif;
+        background: #eef1f5;
+        padding: 20px;
+    }
 
-.container {
-    max-width: 1100px;
-    margin: auto;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-}
+    .container {
+        max-width: 1200px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+    }
 
-h2 {
-    text-align: center;
-    margin-bottom: 25px;
-}
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-.form {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
+    .section-title {
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #3b6bbf;
+        color: #244a8f;
+    }
 
-input {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
+    .form {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 10px;
+    }
 
-button {
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    background: #63a95c;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-}
+    input, select {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #aaa;
+        width: 100%;
+    }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 25px;
-}
+    button {
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        background: #3b6bbf;
+        color: white;
+        font-weight: bold;
+        margin-top: 10px;
+    }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+        font-size: 15px;
+    }
 
-th {
-    background: #f2f2f2;
-}
+    th, td {
+        border: 1px solid #bbb;
+        padding: 8px;
+        text-align: center;
+    }
 
-.delete {
-    background: red;
-    color: white;
-    border: none;
-    padding: 5px 8px;
-    border-radius: 6px;
-    cursor: pointer;
-}
+    th {
+        background: #e8eaf0;
+    }
+
+    .delete {
+        background: red;
+        padding: 6px 10px;
+        border-radius: 5px;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
 </style>
 </head>
 
 <body>
-
 <div class="container">
-<h2>THEO DÕI KẾT QUẢ HỌC TẬP SINH VIÊN</h2>
+
+<h2>BẢNG ĐIỂM SINH VIÊN</h2>
+
+<!-- =================== THÔNG TIN SINH VIÊN =================== -->
+<div class="section-title">1. Thông tin sinh viên</div>
 
 <div class="form">
-    <input id="hoten" placeholder="Họ tên">
-    <input id="masv" placeholder="Mã SV">
+    <input id="masv" placeholder="Mã sinh viên">
+    <input id="hoten" placeholder="Họ và tên">
     <input id="lop" placeholder="Lớp">
-
-    <input id="covan" placeholder="Cố vấn">
-    <input id="monhoc" placeholder="Môn học">
-    <input id="malop" placeholder="Mã lớp học phần">
-
-    <input id="cc" placeholder="Điểm chuyên cần">
-    <input id="dk" placeholder="Điểm điều kiện">
-    <input id="ck" placeholder="Điểm cuối kỳ">
-
-    <button onclick="add()">Thêm kết quả</button>
 </div>
 
-<table>
-<thead>
-<tr>
-    <th>STT</th>
-    <th>Mã SV</th>
-    <th>Họ tên</th>
-    <th>Lớp</th>
-    <th>Cố vấn</th>
-    <th>Môn học</th>
-    <th>Mã lớp</th>
-    <th>CC</th>
-    <th>ĐK</th>
-    <th>CK</th>
-    <th>Tổng kết</th>
-    <th>Thao tác</th>
-</tr>
-</thead>
+<!-- =================== BẢNG ĐIỂM CHI TIẾT =================== -->
+<div class="section-title">2. Bảng điểm chi tiết</div>
 
-<tbody id="data"></tbody>
+<div class="form">
+    <input id="mon" placeholder="Môn thi">
+    <input id="hocky" placeholder="Học kỳ (VD: HK1)">
+    <input id="sotinchi" type="number" placeholder="Số tín chỉ">
+
+    <input id="cc" type="number" placeholder="Điểm chuyên cần">
+    <input id="kt" type="number" placeholder="Điểm kiểm tra">
+    <input id="ck1" type="number" placeholder="Điểm thi lần 1">
+    <input id="ck2" type="number" placeholder="Điểm thi lần 2">
+
+    <input id="ngay" type="date" placeholder="Ngày công bố">
+    <input id="ghichu" placeholder="Ghi chú (Nếu có)">
+</div>
+
+<button onclick="add()">➕ Thêm môn</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Môn thi</th>
+            <th>Học kỳ</th>
+            <th>Số TC</th>
+            <th>CC</th>
+            <th>KT</th>
+            <th>Thi L1</th>
+            <th>Thi L2</th>
+            <th>Điểm 10</th>
+            <th>Điểm chữ</th>
+            <th>Điểm HP</th>
+            <th>Ngày công bố</th>
+            <th>Ghi chú</th>
+            <th>Xóa</th>
+        </tr>
+    </thead>
+    <tbody id="data"></tbody>
 </table>
+
 </div>
 
 <script>
-let list = JSON.parse(localStorage.getItem("ketqua")) || [];
+// =================== TẢI DỮ LIỆU ===================
+let list = JSON.parse(localStorage.getItem("bangdiem")) || [];
 
-// Tính Tổng kết
-function tinhTong(cc, dk, ck) {
-    return (cc * 0.2 + dk * 0.3 + ck * 0.5).toFixed(2);
+// =================== TÍNH ĐIỂM ===================
+function tinhDiem10(cc, kt, ck) {
+    return (cc*0.2 + kt*0.3 + ck*0.5).toFixed(2);
 }
 
+function diemChu(d) {
+    d = Number(d);
+    if (d >= 8.5) return "A";
+    if (d >= 7.0) return "B";
+    if (d >= 5.5) return "C";
+    if (d >= 4.0) return "D";
+    return "F";
+}
+
+function diemHe4(letter) {
+    return {A:4, B:3, C:2, D:1, F:0}[letter];
+}
+
+// =================== HIỂN THỊ ===================
 function render() {
     const tbody = document.getElementById("data");
     tbody.innerHTML = "";
 
-    list.forEach((sv, i) => {
+    list.forEach((r, i) => {
         tbody.innerHTML += `
-        <tr>
-            <td>${i + 1}</td>
-            <td>${sv.masv}</td>
-            <td>${sv.hoten}</td>
-            <td>${sv.lop}</td>
-            <td>${sv.covan}</td>
-            <td>${sv.monhoc}</td>
-            <td>${sv.malop}</td>
-            <td>${sv.cc}</td>
-            <td>${sv.dk}</td>
-            <td>${sv.ck}</td>
-            <td>${sv.tong}</td>
-            <td><button class="delete" onclick="remove(${i})">Xóa</button></td>
-        </tr>
+            <tr>
+                <td>${i+1}</td>
+                <td>${r.mon}</td>
+                <td>${r.hocky}</td>
+                <td>${r.tc}</td>
+                <td>${r.cc}</td>
+                <td>${r.kt}</td>
+                <td>${r.ck1}</td>
+                <td>${r.ck2}</td>
+                <td>${r.d10}</td>
+                <td>${r.dchu}</td>
+                <td>${r.dhp}</td>
+                <td>${r.ngay}</td>
+                <td>${r.ghichu}</td>
+                <td><button class="delete" onclick="remove(${i})">Xóa</button></td>
+            </tr>
         `;
     });
 
-    localStorage.setItem("ketqua", JSON.stringify(list));
+    localStorage.setItem("bangdiem", JSON.stringify(list));
 }
 
+// =================== THÊM MỚI ===================
 function add() {
-    const sv = {
-        hoten: hoten.value,
-        masv: masv.value,
-        lop: lop.value,
-        covan: covan.value,
-        monhoc: monhoc.value,
-        malop: malop.value,
+    let ckFinal = ck2.value ? ck2.value : ck1.value;
+
+    let d10 = tinhDiem10(cc.value, kt.value, ckFinal);
+    let dchu = diemChu(d10);
+    let dhp = diemHe4(dchu);
+
+    const row = {
+        mon: mon.value,
+        hocky: hocky.value,
+        tc: sotinchi.value,
         cc: cc.value,
-        dk: dk.value,
-        ck: ck.value,
-        tong: tinhTong(Number(cc.value), Number(dk.value), Number(ck.value))
+        kt: kt.value,
+        ck1: ck1.value,
+        ck2: ck2.value,
+        d10,
+        dchu,
+        dhp,
+        ngay: ngay.value,
+        ghichu: ghichu.value
     };
 
-    list.push(sv);
+    list.push(row);
     render();
 
-    // Xóa trắng input
     document.querySelectorAll("input").forEach(i => i.value = "");
 }
 
+// =================== XÓA ===================
 function remove(i) {
     list.splice(i, 1);
     render();
