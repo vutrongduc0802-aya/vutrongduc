@@ -104,13 +104,13 @@
 <div class="section-title">1. Thông tin sinh viên</div>
 
 <div class="form">
-    <input id="masv" placeholder="Mã sinh viên">
-    <input id="hoten" placeholder="Họ và tên">
-    <input id="lop" placeholder="Lớp">
-    <input id="covan" placeholder="Cố vấn học tập">
+    <input id="masv" placeholder="Mã sinh viên" oninput="saveStudent()">
+    <input id="hoten" placeholder="Họ và tên" oninput="saveStudent()">
+    <input id="lop" placeholder="Lớp" oninput="saveStudent()">
+    <input id="covan" placeholder="Cố vấn học tập" oninput="saveStudent()">
 </div>
 
-<!-- Hiển thị thông tin đã nhập -->
+<!-- Hiển thị thông tin -->
 <div id="info"></div>
 
 <!-- =================== BẢNG ĐIỂM CHI TIẾT =================== -->
@@ -177,8 +177,8 @@ function renderInfo() {
     `;
 }
 
-// ========= Tự lưu thông tin sinh viên =========
-setInterval(() => {
+// ========= LƯU NGAY KHI NGƯỜI DÙNG NHẬP =========
+function saveStudent() {
     student = {
         masv: masv.value,
         hoten: hoten.value,
@@ -187,7 +187,17 @@ setInterval(() => {
     };
     localStorage.setItem("sinhvien", JSON.stringify(student));
     renderInfo();
-}, 500);
+}
+
+// ========= Khi tải trang → tự điền lại dữ liệu =========
+window.onload = () => {
+    masv.value = student.masv;
+    hoten.value = student.hoten;
+    lop.value = student.lop;
+    covan.value = student.covan;
+    renderInfo();
+    render();
+};
 
 // ========= Định dạng ngày dd/mm/yyyy =========
 function formatDate(d) {
@@ -213,7 +223,7 @@ function diemHe4(letter) {
     return {A:4, B:3, C:2, D:1, F:0}[letter];
 }
 
-// ========= Render bảng điểm =========
+// ========= Render bảng =========
 function render() {
     const tbody = document.getElementById("data");
     tbody.innerHTML = "";
@@ -276,10 +286,7 @@ function remove(i) {
     list.splice(i, 1);
     render();
 }
-
-render();
-renderInfo();
 </script>
 
 </body>
-</html>              
+</html>
