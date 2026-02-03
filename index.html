@@ -43,7 +43,7 @@ function saveStudent() {
     renderInfo();
 }
 
-// LƯU NGAY KHI GÕ
+// LƯU NGAY KHI NGƯỜI DÙNG GÕ
 document.querySelectorAll("#masv, #hoten, #lop, #covan")
 .forEach(input => {
     input.addEventListener("input", saveStudent);
@@ -51,14 +51,14 @@ document.querySelectorAll("#masv, #hoten, #lop, #covan")
 
 // ========= Định dạng ngày dd/mm/yyyy =========
 function formatDate(d) {
-    let date = new Date(d);
     if (!d) return "";
+    let date = new Date(d);
     return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
 }
 
 // ========= Tính điểm =========
 function tinhDiem10(cc, kt, ck) {
-    return (Math.round((cc*0.2 + kt*0.3 + ck*0.5) * 10) / 10).toFixed(1);
+    return (Math.round((cc * 0.2 + kt * 0.3 + ck * 0.5) * 10) / 10).toFixed(1);
 }
 
 function diemChu(d) {
@@ -71,7 +71,7 @@ function diemChu(d) {
 }
 
 function diemHe4(letter) {
-    return {A:4, B:3, C:2, D:1, F:0}[letter];
+    return { A: 4, B: 3, C: 2, D: 1, F: 0 }[letter];
 }
 
 // ========= Render bảng điểm =========
@@ -82,7 +82,7 @@ function render() {
     list.forEach((r, i) => {
         tbody.innerHTML += `
             <tr>
-                <td>${i+1}</td>
+                <td>${i + 1}</td>
                 <td>${r.mon}</td>
                 <td>${r.hocky}</td>
                 <td>${r.tc}</td>
@@ -129,7 +129,10 @@ function add() {
     list.push(row);
     render();
 
-    document.querySelectorAll(".form input").forEach(i => i.value = "");
+    // Chỉ xóa form Điểm – KHÔNG xóa thông tin sinh viên
+    document.querySelectorAll(
+        "#mon, #hocky, #sotinchi, #cc, #kt, #ck1, #ck2, #ngay, #ghichu"
+    ).forEach(i => i.value = "");
 }
 
 // ========= Xóa môn =========
