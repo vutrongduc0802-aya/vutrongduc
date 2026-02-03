@@ -1,161 +1,3 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Bảng điểm sinh viên</title>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #eef1f5;
-        padding: 20px;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: auto;
-        background: white;
-        padding: 25px;
-        border-radius: 10px;
-    }
-
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .section-title {
-        margin-top: 30px;
-        font-size: 20px;
-        font-weight: bold;
-        padding-bottom: 5px;
-        border-bottom: 2px solid #3b6bbf;
-        color: #244a8f;
-    }
-
-    .form {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-        margin-top: 10px;
-    }
-
-    input {
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #aaa;
-        width: 100%;
-    }
-
-    button {
-        padding: 10px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        background: #3b6bbf;
-        color: white;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 18px;
-        font-size: 15px;
-    }
-
-    th, td {
-        border: 1px solid #bbb;
-        padding: 8px;
-        text-align: center;
-    }
-
-    th {
-        background: #e8eaf0;
-    }
-
-    .delete {
-        background: red;
-        padding: 6px 10px;
-        border-radius: 5px;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-
-    #info {
-        background: #f4f6fa;
-        padding: 15px;
-        border-radius: 8px;
-        font-size: 17px;
-        line-height: 1.6;
-        margin-top: 15px;
-    }
-</style>
-</head>
-
-<body>
-<div class="container">
-
-<h2>BẢNG ĐIỂM SINH VIÊN</h2>
-
-<!-- =================== THÔNG TIN SINH VIÊN =================== -->
-<div class="section-title">1. Thông tin sinh viên</div>
-
-<div class="form">
-    <input id="masv" placeholder="Mã sinh viên">
-    <input id="hoten" placeholder="Họ và tên">
-    <input id="lop" placeholder="Lớp">
-    <input id="covan" placeholder="Cố vấn học tập">
-</div>
-
-<!-- Hiển thị thông tin đã nhập -->
-<div id="info"></div>
-
-<!-- =================== BẢNG ĐIỂM CHI TIẾT =================== -->
-<div class="section-title">2. Bảng điểm chi tiết</div>
-
-<div class="form">
-    <input id="mon" placeholder="Môn thi">
-    <input id="hocky" placeholder="Học kỳ (VD: HK1)">
-    <input id="sotinchi" type="number" placeholder="Số tín chỉ">
-
-    <input id="cc" type="number" placeholder="Điểm chuyên cần">
-    <input id="kt" type="number" placeholder="Điểm kiểm tra">
-    <input id="ck1" type="number" placeholder="Điểm thi lần 1">
-    <input id="ck2" type="number" placeholder="Điểm thi lần 2">
-
-    <input id="ngay" type="date">
-    <input id="ghichu" placeholder="Ghi chú (Nếu có)">
-</div>
-
-<button onclick="add()">➕ Thêm môn</button>
-
-<table>
-    <thead>
-        <tr>
-            <th>STT</th>
-            <th>Môn thi</th>
-            <th>Học kỳ</th>
-            <th>Số TC</th>
-            <th>CC</th>
-            <th>KT</th>
-            <th>Thi L1</th>
-            <th>Thi L2</th>
-            <th>Điểm 10</th>
-            <th>Điểm chữ</th>
-            <th>Điểm HP</th>
-            <th>Ngày công bố</th>
-            <th>Ghi chú</th>
-            <th>Xóa</th>
-        </tr>
-    </thead>
-    <tbody id="data"></tbody>
-</table>
-
-</div>
-
 <script>
 // ========= LOAD dữ liệu =========
 let list = JSON.parse(localStorage.getItem("bangdiem")) || [];
@@ -167,31 +9,50 @@ let student = JSON.parse(localStorage.getItem("sinhvien")) || {
     covan: ""
 };
 
+// ========= GÁN LÊN INPUT NGAY KHI TẢI TRANG =========
+window.onload = () => {
+    masv.value = student.masv;
+    hoten.value = student.hoten;
+    lop.value = student.lop;
+    covan.value = student.covan;
+
+    renderInfo();
+    render();
+};
+
 // ========= Hiển thị thông tin sinh viên =========
 function renderInfo() {
     document.getElementById("info").innerHTML = `
-        <b>Mã sinh viên:</b> ${student.masv}<br>
-        <b>Họ và tên:</b> ${student.hoten}<br>
-        <b>Lớp:</b> ${student.lop}<br>
-        <b>Cố vấn học tập:</b> ${student.covan}
+        <b>Mã sinh viên:</b> ${student.masv || ""}<br>
+        <b>Họ và tên:</b> ${student.hoten || ""}<br>
+        <b>Lớp:</b> ${student.lop || ""}<br>
+        <b>Cố vấn học tập:</b> ${student.covan || ""}
     `;
 }
 
 // ========= Tự lưu thông tin sinh viên =========
-setInterval(() => {
+function saveStudent() {
     student = {
         masv: masv.value,
         hoten: hoten.value,
         lop: lop.value,
         covan: covan.value
     };
+
     localStorage.setItem("sinhvien", JSON.stringify(student));
     renderInfo();
-}, 500);
+}
+
+// LƯU NGAY KHI GÕ
+document.querySelectorAll("#masv, #hoten, #lop, #covan")
+.forEach(input => {
+    input.addEventListener("input", saveStudent);
+});
 
 // ========= Định dạng ngày dd/mm/yyyy =========
 function formatDate(d) {
     let date = new Date(d);
+    if (!d) return "";
     return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
 }
 
@@ -268,7 +129,7 @@ function add() {
     list.push(row);
     render();
 
-    document.querySelectorAll("input").forEach(i => i.value = "");
+    document.querySelectorAll(".form input").forEach(i => i.value = "");
 }
 
 // ========= Xóa môn =========
@@ -276,10 +137,4 @@ function remove(i) {
     list.splice(i, 1);
     render();
 }
-
-render();
-renderInfo();
 </script>
-
-</body>
-</html>
