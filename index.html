@@ -40,7 +40,7 @@
         margin-top: 10px;
     }
 
-    input, select {
+    input {
         padding: 10px;
         border-radius: 6px;
         border: 1px solid #aaa;
@@ -83,6 +83,15 @@
         border: none;
         cursor: pointer;
     }
+
+    #info {
+        background: #f4f6fa;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 17px;
+        line-height: 1.6;
+        margin-top: 15px;
+    }
 </style>
 </head>
 
@@ -98,7 +107,11 @@
     <input id="masv" placeholder="Mã sinh viên">
     <input id="hoten" placeholder="Họ và tên">
     <input id="lop" placeholder="Lớp">
+    <input id="covan" placeholder="Cố vấn học tập">
 </div>
+
+<!-- Hiển thị thông tin đã nhập -->
+<div id="info"></div>
 
 <!-- =================== BẢNG ĐIỂM CHI TIẾT =================== -->
 <div class="section-title">2. Bảng điểm chi tiết</div>
@@ -113,7 +126,7 @@
     <input id="ck1" type="number" placeholder="Điểm thi lần 1">
     <input id="ck2" type="number" placeholder="Điểm thi lần 2">
 
-    <input id="ngay" type="date" placeholder="Ngày công bố">
+    <input id="ngay" type="date">
     <input id="ghichu" placeholder="Ghi chú (Nếu có)">
 </div>
 
@@ -144,19 +157,47 @@
 </div>
 
 <script>
-// =================== TẢI DỮ LIỆU ===================
+// ========= LOAD dữ liệu =========
 let list = JSON.parse(localStorage.getItem("bangdiem")) || [];
 
-// =================== FORMAT NGÀY dd-mm-yyyy ===================
-function formatDate(d) {
-    if (!d) return "";
-    let [y, m, day] = d.split("-");
-    return `${day}-${m}-${y}`;
+let student = JSON.parse(localStorage.getItem("sinhvien")) || {
+    masv: "",
+    hoten: "",
+    lop: "",
+    covan: ""
+};
+
+// ========= Hiển thị thông tin sinh viên =========
+function renderInfo() {
+    document.getElementById("info").innerHTML = `
+        <b>Mã sinh viên:</b> ${student.masv}<br>
+        <b>Họ và tên:</b> ${student.hoten}<br>
+        <b>Lớp:</b> ${student.lop}<br>
+        <b>Cố vấn học tập:</b> ${student.covan}
+    `;
 }
 
-// =================== TÍNH ĐIỂM ===================
+// ========= Tự lưu thông tin sinh viên =========
+setInterval(() => {
+    student = {
+        masv: masv.value,
+        hoten: hoten.value,
+        lop: lop.value,
+        covan: covan.value
+    };
+    localStorage.setItem("sinhvien", JSON.stringify(student));
+    renderInfo();
+}, 500);
+
+// ========= Định dạng ngày dd/mm/yyyy =========
+function formatDate(d) {
+    let date = new Date(d);
+    return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+}
+
+// ========= Tính điểm =========
 function tinhDiem10(cc, kt, ck) {
-    return (cc*0.2 + kt*0.3 + ck*0.5).toFixed(1);   // làm tròn 1 số thập phân
+    return (Math.round((cc*0.2 + kt*0.3 + ck*0.5) * 10) / 10).toFixed(1);
 }
 
 function diemChu(d) {
@@ -172,7 +213,7 @@ function diemHe4(letter) {
     return {A:4, B:3, C:2, D:1, F:0}[letter];
 }
 
-// =================== HIỂN THỊ ===================
+// ========= Render bảng điểm =========
 function render() {
     const tbody = document.getElementById("data");
     tbody.innerHTML = "";
@@ -191,7 +232,7 @@ function render() {
                 <td>${r.d10}</td>
                 <td>${r.dchu}</td>
                 <td>${r.dhp}</td>
-                <td>${formatDate(r.ngay)}</td>
+                <td>${r.ngay}</td>
                 <td>${r.ghichu}</td>
                 <td><button class="delete" onclick="remove(${i})">Xóa</button></td>
             </tr>
@@ -201,7 +242,7 @@ function render() {
     localStorage.setItem("bangdiem", JSON.stringify(list));
 }
 
-// =================== THÊM MỚI ===================
+// ========= Thêm môn =========
 function add() {
     let ckFinal = ck2.value ? ck2.value : ck1.value;
 
@@ -220,7 +261,7 @@ function add() {
         d10,
         dchu,
         dhp,
-        ngay: ngay.value,
+        ngay: formatDate(ngay.value),
         ghichu: ghichu.value
     };
 
@@ -230,15 +271,15 @@ function add() {
     document.querySelectorAll("input").forEach(i => i.value = "");
 }
 
-// =================== XÓA ===================
+// ========= Xóa môn =========
 function remove(i) {
     list.splice(i, 1);
     render();
 }
 
 render();
+renderInfo();
 </script>
 
 </body>
 </html>
-
