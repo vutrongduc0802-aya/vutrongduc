@@ -6,7 +6,7 @@
 
 <style>
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: #f4f7f6;
     padding: 30px;
 }
@@ -37,7 +37,6 @@ input {
 }
 
 button {
-    grid-column: span 3;
     padding: 12px;
     border-radius: 10px;
     border: none;
@@ -92,7 +91,7 @@ th {
     <input id="dk" placeholder="Điểm điều kiện">
     <input id="ck" placeholder="Điểm cuối kỳ">
 
-    <button onclick="add()">Thêm kết quả học tập</button>
+    <button onclick="add()">Thêm kết quả</button>
 </div>
 
 <table>
@@ -120,8 +119,9 @@ th {
 <script>
 let list = JSON.parse(localStorage.getItem("ketqua")) || [];
 
+// Tính Tổng kết
 function tinhTong(cc, dk, ck) {
-    return (cc*0.1 + dk*0.3 + ck*0.6).toFixed(2);
+    return (cc * 0.2 + dk * 0.3 + ck * 0.5).toFixed(2);
 }
 
 function render() {
@@ -166,6 +166,8 @@ function add() {
 
     list.push(sv);
     render();
+
+    // Xóa trắng input
     document.querySelectorAll("input").forEach(i => i.value = "");
 }
 
@@ -179,4 +181,3 @@ render();
 
 </body>
 </html>
-
